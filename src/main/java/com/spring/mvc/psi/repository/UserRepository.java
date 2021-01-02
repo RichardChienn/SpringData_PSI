@@ -34,4 +34,8 @@ public interface UserRepository extends JpaRepository<User, Long>{
     // :age 會對應方法的 Integer age 參數 或使用 ?1 表示可對應方法的第一個參數
     @Query(value = "SELECT u FROM User u WHERE YEAR(CURRENT_DATE)-YEAR(u.birth) >= :age", nativeQuery = false)
     List<User> getRetireUsers(Integer age);
+    
+      // 查詢 id 值最大的 User
+    @Query(value = "SELECT u FROM User u WHERE u.id = (SELECT MAX(u2.id) FROM User u2)")
+    User getMaxIdUser();
 }

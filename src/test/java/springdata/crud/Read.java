@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+
 public class Read {
     @Test
     public void t1() {
@@ -44,6 +45,10 @@ public class Read {
         // 檢視退休人員
         System.out.println(
                 userRepository.getRetireUsers(65)
+        );
+      // 查詢 id 值最大的 User
+        System.out.println(
+                userRepository.getMaxIdUser()
         );
         ctx.close();
                 
