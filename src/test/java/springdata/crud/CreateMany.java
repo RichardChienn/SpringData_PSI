@@ -25,6 +25,7 @@ public class CreateMany {
             user.setBirth(faker.date().birthday());
             userRepository.save(user);
         });
+        
         userRepository.save(users);
         System.out.println("OK");
         ctx.close();
