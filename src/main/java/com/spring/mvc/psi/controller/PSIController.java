@@ -106,6 +106,14 @@ public class PSIController {
         return "purchase";
     }
     
+    // 讀取銷貨
+    @GetMapping(value = {"/sales"})
+    public String readSales(Model model) {
+        model.addAttribute("sales", salesRepository.findAll());
+        model.addAttribute("inventories2", inventory2Repository.findAll());
+        return "sales";
+    }
+    
     // 進貨
     @PostMapping(value = {"/purchase"},
                  consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -127,25 +135,17 @@ public class PSIController {
         return "redirect: ./purchase";
     }
     
-      // 讀取銷貨
-    @GetMapping(value = {"/sales"})
-    public String readSales(Model model) {
-        model.addAttribute("sales", salesRepository.findAll());
-        model.addAttribute("inventories2", inventory2Repository.findAll());
-        return "sales";
-    }
-    
     // 銷貨
     @PostMapping(value = {"/sales"},
                  consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public String createsales(@RequestBody MultiValueMap<String, String> form, HttpSession session) {
+    public String createSales(@RequestBody MultiValueMap<String, String> form, HttpSession session) {
         // 取得表單資料
         Integer pid = Integer.parseInt(form.getFirst("pid"));
         Integer quantity = Integer.parseInt(form.getFirst("quantity"));
         Integer price = Integer.parseInt(form.getFirst("price"));
         // 取得操作的使用者
         User user = userRepository.getByName(session.getAttribute("username")+"");
-        // 建立 sales 物件
+        // 建立 Sales 物件
         Sales sales = new Sales();
         sales.setProduct(productRepository.findOne(pid));
         sales.setPrice(price);
@@ -156,4 +156,11 @@ public class PSIController {
         return "redirect: ./sales";
     }
     
+    // 讀取庫存
+    @GetMapping(value = {"/inventory"})
+    public String readInventory(Model model) {
+        model.addAttribute("inventories", inventoryRepository.findAll());
+        model.addAttribute("inventories2", inventory2Repository.findAll());
+        return "inventory";
+    }
 }
