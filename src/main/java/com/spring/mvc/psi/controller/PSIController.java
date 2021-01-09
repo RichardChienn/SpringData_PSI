@@ -1,20 +1,29 @@
 package com.spring.mvc.psi.controller;
 
 import com.spring.mvc.psi.entities.Product;
+import com.spring.mvc.psi.entities.Purchase;
+import com.spring.mvc.psi.entities.Sales;
 import com.spring.mvc.psi.entities.User;
+import com.spring.mvc.psi.repository.Inventory2Repository;
+import com.spring.mvc.psi.repository.InventoryRepository;
 import com.spring.mvc.psi.repository.ProductRepository;
+import com.spring.mvc.psi.repository.PurchaseRepository;
+import com.spring.mvc.psi.repository.SalesRepository;
 import com.spring.mvc.psi.repository.UserRepository;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -27,9 +36,22 @@ public class PSIController {
     @Autowired
     private UserRepository userRepository;
     
+    @Autowired
+    private PurchaseRepository purchaseRepository;
+    
+    @Autowired
+    private SalesRepository salesRepository;
+    
+    @Autowired
+    private InventoryRepository inventoryRepository;
+    
+    @Autowired
+    private Inventory2Repository inventory2Repository;
+    
+    
     @GetMapping(value = {"/product", "/product/{id}", "/product/{name}/{id}"})
     public String readProduct(Model model, 
-            @PathVariable Optional<Long> id,
+            @PathVariable Optional<Integer> id,
             @PathVariable Optional<String> name) {
         String _method = "POST";
         Product product = new Product();
@@ -76,7 +98,62 @@ public class PSIController {
         return "redirect: ./product";
     }
     
+    // 讀取進貨
+    @GetMapping(value = {"/purchase"})
+    public String readPurchase(Model model) {
+        model.addAttribute("purchases", purchaseRepository.findAll());
+        model.addAttribute("inventories2", inventory2Repository.findAll());
+        return "purchase";
+    }
     
+    // 進貨
+    @PostMapping(value = {"/purchase"},
+                 consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public String createPurchase(@RequestBody MultiValueMap<String, String> form, HttpSession session) {
+        // 取得表單資料
+        Integer pid = Integer.parseInt(form.getFirst("pid"));
+        Integer quantity = Integer.parseInt(form.getFirst("quantity"));
+        Integer price = Integer.parseInt(form.getFirst("price"));
+        // 取得操作的使用者
+        User user = userRepository.getByName(session.getAttribute("username")+"");
+        // 建立 Purchase 物件
+        Purchase purchase = new Purchase();
+        purchase.setProduct(productRepository.findOne(pid));
+        purchase.setPrice(price);
+        purchase.setQuantity(quantity);
+        purchase.setUser(user);
+        // 儲存
+        purchaseRepository.saveAndFlush(purchase);
+        return "redirect: ./purchase";
+    }
     
+      // 讀取銷貨
+    @GetMapping(value = {"/sales"})
+    public String readSales(Model model) {
+        model.addAttribute("sales", salesRepository.findAll());
+        model.addAttribute("inventories2", inventory2Repository.findAll());
+        return "sales";
+    }
+    
+    // 銷貨
+    @PostMapping(value = {"/sales"},
+                 consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public String createsales(@RequestBody MultiValueMap<String, String> form, HttpSession session) {
+        // 取得表單資料
+        Integer pid = Integer.parseInt(form.getFirst("pid"));
+        Integer quantity = Integer.parseInt(form.getFirst("quantity"));
+        Integer price = Integer.parseInt(form.getFirst("price"));
+        // 取得操作的使用者
+        User user = userRepository.getByName(session.getAttribute("username")+"");
+        // 建立 sales 物件
+        Sales sales = new Sales();
+        sales.setProduct(productRepository.findOne(pid));
+        sales.setPrice(price);
+        sales.setQuantity(quantity);
+        sales.setUser(user);
+        // 儲存
+        salesRepository.saveAndFlush(sales);
+        return "redirect: ./sales";
+    }
     
 }
