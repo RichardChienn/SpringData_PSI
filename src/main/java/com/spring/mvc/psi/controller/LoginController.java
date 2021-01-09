@@ -18,8 +18,7 @@ import javax.servlet.http.HttpSession;
 public class LoginController {
 
     @RequestMapping("/check")
-    @ResponseBody
-    public String check(@RequestParam("id_token") String id_token,HttpSession session) throws Exception {
+    public String check(@RequestParam("id_token") String id_token, HttpSession session) throws Exception {
         final NetHttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();
         final JacksonFactory jsonFactory = JacksonFactory.getDefaultInstance();
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
@@ -49,10 +48,10 @@ public class LoginController {
             session.setAttribute("email", email);
             session.setAttribute("username", name);
             session.setAttribute("pictureUrl", pictureUrl);
-            //return email + ":" + emailVerified + "\nname" + name +":"+ pictureUrl;
+            //return email + ":" + emailVerified + "\nname" + name + ":" + pictureUrl;
             return "index";
         } else {
-            return "redirect:/index.html";
+            return "redirect: /index.html";
         }
     }
 }

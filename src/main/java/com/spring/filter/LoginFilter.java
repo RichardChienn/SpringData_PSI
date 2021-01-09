@@ -22,14 +22,12 @@ public class LoginFilter extends HttpFilter {
 
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
-        
         HttpSession session = req.getSession();
-       if( session.getAttribute("username") != null){
+        if(session.getAttribute("username") != null) {
             chain.doFilter(req, res);
-       }else{
-           res.getWriter().print("Please Login in !!!!");
-       }
-       
+        } else {
+            res.getWriter().print("Please Login in!");
+        }
     }
 
 }
